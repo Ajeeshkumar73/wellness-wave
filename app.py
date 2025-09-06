@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
 from datetime import datetime
 import os
+import pandas as pd
+import joblib
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "your_secret_key")
@@ -16,6 +18,95 @@ doctors_col = db["doctors"]
 appointments_col = db["appointments"]
 predictions_col = db["predictions"]
 messages_col = db["messages"]
+
+
+# Load all models
+diseases = ["Obesity", "Hypertension", "Diabetes", "HeartDisease"]
+models = {d: joblib.load(f"{d}_model.pkl") for d in diseases}
+
+def risk_status(prob):
+    if prob > 0.7:
+        return "High Risk"
+    elif prob > 0.4:
+        return "Intermediate Risk"
+    else:
+        return "Low Risk"
+
+def metric_status(name, value):
+    if name == "BMI":
+        if value < 18.5: return "Underweight"
+        elif value < 25: return "Normal"
+        elif value < 30: return "Overweight"
+        else: return "Obese"
+    if name == "BloodSugar":
+        if value < 100: return "Normal"
+        elif value < 126: return "Prediabetes"
+        else: return "High"
+    if name == "BloodPressure":
+        s,d = value
+        if s < 120 and d < 80: return "Normal"
+        elif s < 130 and d < 80: return "Elevated"
+        elif s < 140 or d < 90: return "High BP Stage 1"
+        else: return "High BP Stage 2"
+    if name == "Cholesterol":
+        if value < 200: return "Desirable"
+        elif value < 240: return "Borderline High"
+        else: return "High"
+    return "Unknown"
+
+
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.form
+    height = float(data['height'])
+    weight = float(data['weight'])
+    bmi = weight / ((height / 100) ** 2)
+    
+    input_data = pd.DataFrame([{
+        "Age": int(data['age']),
+        "Gender": data['gender'],
+        "Height_cm": height,
+        "Weight_kg": weight,
+        "Smoking": data['smoking'],
+        "Alcohol": data['alcohol'],
+        "Exercise_Freq": data['exercise'],
+        "Sleep_Hours": float(data['sleep']),
+        "SystolicBP": float(data['systolic']),
+        "DiastolicBP": float(data['diastolic']),
+        "Cholesterol": float(data['cholesterol']),
+        "BloodSugar": float(data['bloodSugar']),
+        "BMI": bmi
+    }])
+
+    input_data = pd.get_dummies(input_data)
+    # Align columns with models
+    for disease in diseases:
+        for col in models[disease].feature_names_in_:
+            if col not in input_data.columns:
+                input_data[col] = 0
+        input_data = input_data[models[disease].feature_names_in_]
+
+    results = {}
+    for disease in diseases:
+        prob = models[disease].predict_proba(input_data)[0][1]
+        results[disease] = {
+            "chance": f"{prob*100:.1f}%",
+            "status": risk_status(prob)
+        }
+
+    metrics = {
+        "BMI": {"value": round(bmi,1), "status": metric_status("BMI", bmi)},
+        "BloodPressure": {"value": f"{data['systolic']}/{data['diastolic']}", 
+                          "status": metric_status("BloodPressure", (float(data['systolic']), float(data['diastolic'])))},
+        "BloodSugar": {"value": data['bloodSugar'], "status": metric_status("BloodSugar", float(data['bloodSugar']))},
+        "Cholesterol": {"value": data['cholesterol'], "status": metric_status("Cholesterol", float(data['cholesterol']))},
+    }
+
+    return jsonify({"diseases": results, "metrics": metrics})
+
+
+
 
 # Home page
 @app.route("/")
@@ -99,6 +190,18 @@ def user_home():
         recent_predictions=recent_predictions,
         upcoming_appointments=upcoming_appointments
     )
+
+@app.route('/predict_page')
+def predict_page():
+    return render_template('predict_page.html')  # your prediction form page
+
+@app.route('/back_page')
+def back_page():
+    return redirect(url_for('user_home'))
+
+
+
+
 
 #doctor register
 @app.route('/doctor_register', methods=['GET', 'POST'])
