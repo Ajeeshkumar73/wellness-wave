@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Wave</title>
+
+    <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <style>
+
+
+  #popupForm {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  #popupForm .card {
+    width: 100%;
+    max-width: 700px;
+    position: relative;
+  }
+
+
+  .close-btn {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    z-index: 10001;
+  }
+
+  #popupdr {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  display: none; /* initially hidden */
+}
+
+.container::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+</style>
+
+</head>
+
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-4" >
+  <a class="navbar-brand d-flex align-items-center" href="#" style="padding-left: 30px;">
+
+    <span><strong>Wellness Wave</strong> <small class="text-danger">| Family Doctor</small></span>
+  </a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse justify-content-end" id="navbarNav" style="padding-right: 100px;">
+    <ul class="navbar-nav align-items-center">
+      <li class="nav-item"><a class="nav-link" href="#service">Services</a></li>
+      <li class="nav-item"><a class="nav-link" href="#reviews">Reviews</a></li>
+      <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+      <li class="nav-item">
+        <a class="nav-link d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">Log In</a>
+        <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="">Admin Login</a></li>
+                                <li><a class="dropdown-item" href="">User Login</a></li>
+                                <li><a class="dropdown-item" href="">Doctor Login</a></li>
+                            </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+    
+ <!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container mt-3">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show flash-msg" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- Hero Section -->
+<section class="hero-section d-flex flex-column justify-content-center align-items-center text-center text-white position-relative" 
+       style="min-height: 70vh; background: url('{{ url_for('static', filename='images/herosection.png') }}') no-repeat center center/cover;">
+
+  <!-- Overlay for better text contrast -->
+  <div class="position-absolute top-0 start-0 w-100 " style="background-color: rgba(0,0,0,0.5);"></div>
+
+  <!-- Hero Content -->
+  <div class="position-relative z-1"style="padding-top:0px;font-sixe 20px">
+    <h1 class="fw-bold mb-3" >Welcome to Wellness Wave</h1>
+    <p class="mb-4 fs-5">Helping to Build a Healthy Community</p>
+  </div>
+</section>
+
+
+    <!-- Hero Section2 -->
+    <div class="hero-section" style="background-color:white;padding-top:0px; margin-top:-150px;">
+        <div class="container">
+            <div class="row align-items-center min-vh-100" style="padding-top:0px;">
+                <div class="col-lg-6" data-aos="fade-up" style="margin-top:0px;">
+                    <h1 class="display-4 fw-bold text-primary mb-4" style="font-weight=400" >
+                        Wellness Wave
+                    </h1>
+                    <p class="lead mb-4">
+                        Your comprehensive healthcare solution featuring AI-powered disease prediction, 
+                        expert consultations, and seamless appointment management.
+                    </p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        <button class="btn btn-primary btn-lg me-md-2" onclick="openForm()">
+    <i class="fas fa-user-plus me-2"></i>Join as Patient
+</button>
+                    <a href="#" onclick="openDoctorRegister()" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-user-md me-2"></i>Join as Doctor
+                    </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{{ url_for('static', filename='images/medical-banner.jpg') }}" 
+                         alt="Healthcare Dashboard" class="img-fluid rounded shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--user register-->
+    <div id="popupForm" >
+    <div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header  text-white text-center" style="background-color:#007bff ;">
+                    <span class="close-btn" onclick="closeForm()">&times;</span>
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Patient Registration
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST"  action="{{ url_for('user_register') }}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" required oninput="validateEmail()">
+                                    <small id="emailFeedback" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" required oninput="validatePassword()">
+                                    <small id="passwordFeedback" class="text-danger"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="full_name" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="full_name" name="full_name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="age" class="form-label">Age</label>
+                                    <input type="number" class="form-control" id="age" name="age" min="1" max="120">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="gender" class="form-label">Gender</label>
+                                    <select class="form-select" id="gender" name="gender">
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required oninput="validatePhone()">
+                                    <small id="phoneFeedback" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-user-plus me-2"></i>Register
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small class="text-muted">
+                        Already have an account? 
+                        <a href="#" class="text-success" onclick="closeForm(); openLoginForm()">Login here</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- user Login Popup -->
+<div id="loginPopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 9999;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <span class="close-btn" onclick="closeLoginForm()">&times;</span>
+                        <h3 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Patient Login</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('user_login') }}">
+                            <div class="mb-3">
+                                <label for="login_username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="login_username" name="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="login_password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="login_password" name="password" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center">
+                        <small class="text-muted">
+                            Don't have an account? 
+                            <a href="#" class="text-primary" onclick="openForm(); closeLoginForm()">Register here</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--doctor register-->
+<div id="popupdr">
+<div class="container" style="max-height: 100vh; overflow-y: auto; padding: 30px; width: 800px; " >
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg">
+                <div class="card-header bg-info text-white text-center">
+                    <span class="close-btn" onclick="closeForms()">&times;</span>
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-md me-2"></i>Doctor Registration
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('doctor_register') }}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" required oninput="validateEmail()">
+                                    <small id="emailFeedback" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" required oninput="validatePassword()">
+                                    <small id="passwordFeedback" class="text-danger"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="full_name" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="full_name" name="full_name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="specialization" class="form-label">Specialization</label>
+                                    <select class="form-select" id="specialization" name="specialization" required>
+                                        <option value="">Select Specialization</option>
+                                        <option value="Cardiologist">Cardiologist</option>
+                                        <option value="Endocrinologist">Endocrinologist</option>
+                                        <option value="Internal Medicine">Internal Medicine</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="qualification" class="form-label">Qualification</label>
+                                    <input type="text" class="form-control" id="qualification" name="qualification" 
+                                           placeholder="e.g., MD, MBBS, etc.">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="experience" class="form-label">Experience (Years)</label>
+                                    <input type="number" class="form-control" id="experience" name="experience" min="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required oninput="validatePhone()">
+                                    <small id="phoneFeedback" class="text-danger"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="consultation_fee" class="form-label">Consultation Fee (Rs)</label>
+                                    <input type="number" class="form-control" id="consultation_fee" name="consultation_fee" 
+                                           step="0.01" min="0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-info">
+                                <i class="fas fa-user-plus me-2"></i>Register
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small class="text-muted">
+                        Already have an account? 
+                        <a href="#" class="text-info" onclick="openDocLogin(); closeForms();">Login here</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Doctor Login Popup -->
+<div id="popupDocLogin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 9999;">
+    <div class="container" style="max-height: 90vh; overflow-y: auto;">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-info text-white text-center">
+                        <span class="close-btn" onclick="closeDocLogin()">&times;</span>
+                        <h3 class="mb-0">
+                            <i class="fas fa-user-md me-2"></i>Doctor Login
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('doctor_login') }}">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-info">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center">
+                        <small class="text-muted">
+                            Don't have an account? 
+                            <a href="" class="text-info" onclick="openDocRegister(); closeDocLogin();">Register here</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <!-- Features Section -->
+  <div id="service">
+    <div class="container my-5">
+      <div class="row text-center mb-5">
+        <div class="col-12">
+          <h2 class="display-5 fw-bold text-primary">Our Services</h2>
+          <p class="lead text-muted">Comprehensive healthcare solutions for better health outcomes</p>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm" data-aos="fade-up">
+            <div class="card-body text-center">
+              <div class="feature-icon mb-3">
+                <i class="fas fa-brain fa-3x text-primary"></i>
+              </div>
+              <h5 class="card-title">AI Disease Prediction</h5>
+              <p class="card-text">
+                Advanced machine learning algorithms analyze your lifestyle data to predict potential health risks.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm" data-aos="fade-up">
+            <div class="card-body text-center">
+              <div class="feature-icon mb-3">
+                <i class="fas fa-calendar-check fa-3x text-success"></i>
+              </div>
+              <h5 class="card-title">Easy Appointments</h5>
+              <p class="card-text">
+                Book appointments with specialized doctors based on your health assessment results.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm"data-aos="fade-up">
+            <div class="card-body text-center">
+              <div class="feature-icon mb-3">
+                <i class="fas fa-comments fa-3x text-info"></i>
+              </div>
+              <h5 class="card-title">Direct Communication</h5>
+              <p class="card-text">
+                Chat directly with healthcare professionals for consultations and follow-ups.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+    <!-- Prevention Section -->
+    <div class="bg-light py-5">
+        <div class="container">
+            <div class="row align-items-center" data-aos="fade-up">
+                <div class="col-lg-6">
+                    <h2 class="display-6 fw-bold text-primary mb-4">Prevention is Better Than Cure</h2>
+                    <p class="lead mb-4">
+                        Our platform focuses on preventive healthcare through lifestyle analysis and personalized recommendations.
+                    </p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Lifestyle Disease Risk Assessment</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Personalized Diet & Exercise Plans</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Early Warning Systems</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Expert Medical Guidance</li>
+                    </ul>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{{ url_for('static', filename='images/banner.png') }}" 
+                         alt="Healthy Lifestyle" class="img-fluid rounded shadow">
+                </div>
+            </div>
+        </div>
+    </div>
+
+      <!-- About Section -->
+<section class="container py-5">
+  <div class="row align-items-center">
+    <div class="col-md-6">
+      <img src="" alt="" class="img-fluid rounded" />
+    </div>
+    <div class="col-md-6">
+      <h3 class="text-primary fw-bold">About </h3>
+        <p>Wellness Wave is a revolutionary platform designed to bridge the gap between patients and medical professionals. Our mission is to provide a seamless, secure, and user-friendly experience for online consultations, health management, and continuous care.</p>
+                    <p>We are committed to building a community where health and well-being are prioritized. Our platform ensures the highest standards of privacy and security, giving you peace of mind as you manage your health journey.</p>
+      <h5 class="fw-bold">Wellness Wave</h5>
+      
+    </div>
+    
+  </div>
+</section>
+
+    <section class="py-5 bg-light-custom" id="reviews">
+  <div class="container">
+    <div class="text-center" data-aos="fade-up">
+        <h2 class="section-title">Real People, Real Impact</h2>
+        <p class="lead section-subtitle mb-5">Don't just take our word for it.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card-custom">
+          <div class="stars mb-2"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+          <p>"From confused art student to a thriving UX designer. PathFinder didn't just give me a job title, it gave me a direction. Incredibly accurate!"</p>
+          <div class="d-flex align-items-center mt-3">
+            <div class="ms-3"><h6 class="fw-bold mb-0">Anika J.</h6></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="card-custom">
+          <div class="stars mb-2"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+          <p>"I thought cybersecurity was out of my league. PathFinder broke it down for me, suggested a bootcamp, and I landed a job in 4 months. Life-changing."</p>
+          <div class="d-flex align-items-center mt-3">
+            
+            <div class="ms-3"><h6 class="fw-bold mb-0">Kabir M.</h6></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="card-custom">
+            <div class="stars mb-2"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></div>
+          <p>"The best part was understanding my 'soft skills' and which careers value them. It’s like Tinder for your professional life, but way more successful. 🔥"</p>
+          <div class="d-flex align-items-center mt-3">
+          
+            <div class="ms-3"><h6 class="fw-bold mb-0">Zara L.</h6></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2025 Wellness Wave. All rights reserved.</p>
+            <p class="mb-0">
+                <i class="fas fa-envelope me-2"></i>support@wellnesswave.com
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+<!--popup-->
+    <script>
+    function openForm() {
+      document.getElementById('popupForm').style.display = 'flex';
+    }
+
+    function closeForm() {
+      document.getElementById('popupForm').style.display = 'none';
+    }
+
+    function openLoginForm() {
+  document.getElementById('loginPopup').style.display = 'flex';
+}
+
+function closeLoginForm() {
+  document.getElementById('loginPopup').style.display = 'none';
+}
+
+window.addEventListener('click', function (e) {
+  const loginPopup = document.getElementById('loginPopup');
+  if (e.target === loginPopup) {
+    closeLoginForm();
+  }
+
+  const registerPopup = document.getElementById('popupForm');
+  if (e.target === registerPopup) {
+    closeForm();
+  }
+});
+
+function openDocLogin() {
+  document.getElementById('popupDocLogin').style.display = 'flex';
+}
+function closeDocLogin() {
+  document.getElementById('popupDocLogin').style.display = 'none';
+}
+
+function openDocRegister() {
+  document.getElementById('popupdr').style.display = 'flex';
+}
+function closeForms() {
+  document.getElementById('popupdr').style.display = 'none';
+  closeDocLogin();
+}
+
+  </script>
+
+ <!--dr reg popup--> 
+ <script>
+function openDoctorRegister() {
+    document.getElementById('popupdr').style.display = 'flex';
+}
+function closeForms() {
+    document.getElementById('popupdr').style.display = 'none';
+}
+
+// Close on outside click (optional)
+window.addEventListener('click', function (e) {
+  const drPopup = document.getElementById('popupdr');
+  if (e.target === drPopup) {
+    closeForms();
+  }
+});
+</script>
+
+
+
+
+<!--user register validatation-->
+  <script>
+function validateEmail() {
+    const email = document.getElementById("email");
+    const feedback = document.getElementById("emailFeedback");
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!regex.test(email.value.trim())) {
+        email.classList.add("is-invalid");
+        email.classList.remove("is-valid");
+        feedback.textContent = "Please enter a valid email.";
+        return false;
+    } else {
+        email.classList.remove("is-invalid");
+        email.classList.add("is-valid");
+        feedback.textContent = "";
+        return true;
+    }
+}
+
+function validatePassword() {
+    const password = document.getElementById("password");
+    const feedback = document.getElementById("passwordFeedback");
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^]).{6,}$/;
+
+    if (!regex.test(password.value.trim())) {
+        password.classList.add("is-invalid");
+        password.classList.remove("is-valid");
+        feedback.textContent = "Password must include upper, lower, number, special character (min 6 chars).";
+        return false;
+    } else {
+        password.classList.remove("is-invalid");
+        password.classList.add("is-valid");
+        feedback.textContent = "";
+        return true;
+    }
+}
+
+function validatePhone() {
+    const phone = document.getElementById("phone");
+    const feedback = document.getElementById("phoneFeedback");
+    const regex = /^[0-9]{10}$/;
+
+    if (!regex.test(phone.value.trim())) {
+        phone.classList.add("is-invalid");
+        phone.classList.remove("is-valid");
+        feedback.textContent = "Enter a valid 10-digit phone number.";
+        return false;
+    } else {
+        phone.classList.remove("is-invalid");
+        phone.classList.add("is-valid");
+        feedback.textContent = "";
+        return true;
+    }
+}
+
+function validateForm() {
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
+    const isPhoneValid = validatePhone();
+
+    return isEmailValid && isPasswordValid && isPhoneValid;
+}
+</script>
+
+
+<!--login render-->
+<script>
+    window.onload = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("open_login") === "true") {
+            openLoginForm();
+        }
+    };
+</script>
+
+<!--flash hide-->   
+ <script>
+  setTimeout(function () {
+    const alerts = document.querySelectorAll(".flash-msg");
+    alerts.forEach(function(alert) {
+      const bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    });
+  }, 1000); 
+</script>
+
+<script>
+  AOS.init({ duration: 800, once: false, mirror: true, easing: 'ease-in-out' });
+</script>
+
+<!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+</body>
+</html>

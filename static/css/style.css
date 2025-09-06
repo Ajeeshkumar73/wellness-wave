@@ -1,0 +1,486 @@
+/* Healthcare Platform Custom Styles */
+
+:root {
+    --primary-color: #007bff;
+    --success-color:#007bff ;
+    --info-color: #17a2b8;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --healthcare-blue: #4a90e2;
+    --healthcare-green: #3cafd9;
+    --healthcare-teal: #50e3c2;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fc;
+    color: #333;
+    line-height: 1.6;
+}
+
+
+
+/* Cards */
+.card {
+    border: none;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    padding: 20px;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-bottom: none;
+    padding: 1.5rem;
+    font-weight: 600;
+    background-color :#3d88b6;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--healthcare-blue));
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success-color), var(--healthcare-green));
+}
+
+.btn-info {
+    background: linear-gradient(135deg, var(--info-color), var(--healthcare-teal));
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* Form Elements */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* Hero Section */
+
+
+.hero-section .display-4 {
+
+    margin-bottom: 1.5rem;
+}
+
+.hero-section .lead {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+/* Feature Cards */
+.feature-icon {
+    
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Statistics Cards */
+.card.bg-primary, .card.bg-success, .card.bg-info, .card.bg-warning, .card.bg-danger {
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.card.bg-primary:hover, .card.bg-success:hover, .card.bg-info:hover, .card.bg-warning:hover, .card.bg-danger:hover {
+    transform: translateY(-5px);
+}
+
+/* Tables */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.table th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Badges */
+.badge {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+/* Progress Bars */
+.progress {
+    border-radius: 8px;
+    height: 8px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 8px;
+    transition: width 0.6s ease;
+}
+
+/* Chat Styles */
+.chat-container {
+    padding: 1rem;
+    background-color: #f8f9fc;
+}
+
+.message-wrapper {
+    margin-bottom: 1rem;
+}
+
+.message-wrapper.sent {
+    text-align: right;
+}
+
+.message-wrapper.received {
+    text-align: left;
+}
+
+.message {
+    display: inline-block;
+    max-width: 70%;
+    position: relative;
+}
+
+.message-content {
+    background-color: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    word-wrap: break-word;
+}
+
+.message-wrapper.sent .message-content {
+    background: linear-gradient(135deg, var(--primary-color), var(--healthcare-blue));
+    color: white;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+/* Avatar Circle */
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--success-color), var(--healthcare-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+/* Border Utilities */
+.border-left-success {
+    border-left: 4px solid var(--success-color) !important;
+}
+
+.border-left-warning {
+    border-left: 4px solid var(--warning-color) !important;
+}
+
+.border-left-danger {
+    border-left: 4px solid var(--danger-color) !important;
+}
+
+/* Prediction Results */
+.prediction-card {
+    background: linear-gradient(135deg, #fff, #f8f9fc);
+    border: 2px solid #e9ecef;
+}
+
+.prediction-card.high-risk {
+    border-color: var(--danger-color);
+    background: linear-gradient(135deg, #fff, #fff5f5);
+}
+
+.prediction-card.medium-risk {
+    border-color: var(--warning-color);
+    background: linear-gradient(135deg, #fff, #fffdf5);
+}
+
+.prediction-card.low-risk {
+    border-color: var(--success-color);
+    background: linear-gradient(135deg, #fff, #f0fff4);
+}
+
+/* Appointment Status */
+.appointment-status {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.appointment-status::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background-color: var(--warning-color);
+}
+
+.appointment-status.confirmed::before {
+    background-color: var(--success-color);
+}
+
+.appointment-status.cancelled::before {
+    background-color: var(--danger-color);
+}
+
+.appointment-status.completed::before {
+    background-color: var(--info-color);
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    margin-top: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0;
+        text-align: center;
+    }
+    
+    .hero-section .display-4 {
+        font-size: 2rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+    }
+    
+    .message {
+        max-width: 85%;
+    }
+}
+
+/* Animation Classes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Loading Spinner */
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Custom Utilities */
+.text-healthcare-blue {
+    color: var(--healthcare-blue) !important;
+}
+
+.text-healthcare-green {
+    color: var(--healthcare-green) !important;
+}
+
+.bg-healthcare-blue {
+    background-color: var(--healthcare-blue) !important;
+}
+
+.bg-healthcare-green {
+    background-color: var(--healthcare-green) !important;
+}
+
+/* Risk Level Indicators */
+.risk-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.risk-low {
+    background-color: var(--success-color);
+}
+
+.risk-medium {
+    background-color: var(--warning-color);
+}
+
+.risk-high {
+    background-color: var(--danger-color);
+}
+
+/* Doctor Profile */
+.doctor-profile-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: var(--shadow-lg);
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus Styles for Accessibility */
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .btn,
+    footer {
+        display: none;
+    }
+    
+    .card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+}
+
+#service{
+    background-color: rgb(242 242 242);
+    height: 600px;
+    padding-top: 1px;
+}
+
+#reviews .testimonial img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--purple);
+    }
+    #reviews .stars {
+        color: #ffc107;
+    }
+#reviews{
+    border-bottom: 1px solid rgb(207, 207, 207);
+    border-top: 1px solid rgb(207, 207, 207);
+}
+
+.nav-link {
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: red;
+    font-size: 17px;
+}
