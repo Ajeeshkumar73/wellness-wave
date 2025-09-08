@@ -18,6 +18,7 @@ doctors_col = db["doctors"]
 appointments_col = db["appointments"]
 predictions_col = db["predictions"]
 messages_col = db["messages"]
+reviews_col = db["reviews"]
 
 
 # Load all models
@@ -111,8 +112,9 @@ def predict():
 # Home page
 @app.route("/")
 def index():
+    reviews = list(reviews_col.find().sort("created_at", -1))
     open_login = request.args.get("open_login", "false")
-    return render_template("index.html", open_login=open_login)
+    return render_template("index.html", open_login=open_login, reviews=reviews)
 
 # User registration
 @app.route("/user_register", methods=["POST"])
@@ -120,10 +122,7 @@ def user_register():
     username = request.form.get("username", "").strip()
     email = request.form.get("email", "").strip()
     password = request.form.get("password", "")
-    full_name = request.form.get("full_name", "").strip()
-    age = request.form.get("age", "")
-    gender = request.form.get("gender", "")
-    phone = request.form.get("phone", "").strip()
+
 
     if users_col.find_one({"username": username}):
         flash("Username already taken. Try a different one.", "error")
@@ -138,11 +137,6 @@ def user_register():
         "username": username,
         "email": email,
         "password": generate_password_hash(password),
-        "full_name": full_name,
-        "age": int(age) if age.isdigit() else None,
-        "gender": gender,
-        "phone": phone,
-        "user_type": "user",
         "created_at": datetime.now()
     })
 
@@ -305,6 +299,25 @@ def doctor_home():
                            pending_appointments=pending_appointments,
                            unread_messages=unread_messages)
 
+@app.route("/add_review", methods=["POST"])
+def add_review():
+    if "username" not in session:
+        flash("You must be logged in to post a review.", "error")
+        return redirect(url_for("user_login"))
+
+    review_text = request.form.get("review", "").strip()
+
+    if review_text:
+        reviews_col.insert_one({
+            "username": session["username"],
+            "review": review_text,
+            "created_at": datetime.now()
+        })
+        flash("Review posted successfully!", "success")
+    else:
+        flash("Review cannot be empty.", "error")
+
+    return redirect(url_for("user_home"))
 
 
 # Logout
